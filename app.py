@@ -72,7 +72,7 @@ def homepage():
 
 
 
-        return render_template("LatestHomePage.html")
+        return render_template("index.html")
 
 
 @app.route("/page2")
@@ -613,5 +613,6 @@ def convert_docx_to_jld():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
+
 
     app.run(debug=True, port=5000)

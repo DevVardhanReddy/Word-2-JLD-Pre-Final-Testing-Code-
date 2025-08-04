@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel to JLD Converter</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto&display=swap');
+/* Import Google Fonts */
+/* Import Google Fonts */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Segoe UI', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--darkest);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+    padding-top: 80px;
+    line-height: 1.6;
+}
+
+/* 2025 Modern CSS Variables */
+:root {
+  --darkest: #0a0a0f;
+  --darker: #141420;
+  --dark: #1e1e2e;
+  --primary: #6366f1;
+  --secondary: #8b5cf6;
+  --accent: #06b6d4;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --light: #f8fafc;
+  --glass: rgba(20, 20, 32, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-highlight: rgba(255, 255, 255, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+/* 2025 Modern Cosmic Background */
+.cosmic-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -3;
+  background:
+    radial-gradient(circle at 15% 25%, rgba(99, 102, 241, 0.12) 0%, transparent 30%),
+    radial-gradient(circle at 85% 75%, rgba(139, 92, 246, 0.08) 0%, transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.06) 0%, transparent 40%),
+    linear-gradient(135deg, var(--darkest) 0%, var(--darker) 50%, var(--dark) 100%);
+  animation: cosmicFlow 25s infinite ease-in-out;
+}
+
+@keyframes cosmicFlow {
+  0%, 100% { 
+    opacity: 0.9; 
+    transform: scale(1) rotate(0deg);
+  }
+  33% { 
+    opacity: 1; 
+    transform: scale(1.02) rotate(0.5deg);
+  }
+  66% { 
+    opacity: 0.95; 
+    transform: scale(0.98) rotate(-0.5deg);
+  }
+}
+
+
+
+/* Enhanced Nebula Effect 2025 */
+.nebula {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 25% 35%, rgba(99, 102, 241, 0.15) 0%, transparent 35%),
+    radial-gradient(circle at 75% 65%, rgba(139, 92, 246, 0.12) 0%, transparent 35%),
+    radial-gradient(circle at 50% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 20% 80%, rgba(34, 197, 94, 0.06) 0%, transparent 30%);
+  opacity: 0.6;
+  animation: nebulaFloat 80s infinite linear;
+  filter: blur(1px);
+}
+
+@keyframes nebulaFloat {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-5%, 5%); }
+  50% { transform: translate(-10%, 0); }
+  75% { transform: translate(-5%, -5%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* 3D Floating Geometric Elements */
+.floating-3d {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  transition: transform 0.1s ease-out;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.geometric-shape {
+  position: absolute;
+  opacity: 0.1;
+  animation: float3D 20s infinite ease-in-out;
+  transform-style: preserve-3d;
+}
+
+.cube {
+  width: 60px;
+  height: 60px;
+  background: var(--gradient-1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 10px;
+  animation: rotateCube 15s infinite linear;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+}
+
+.pyramid {
+  width: 0;
+  height: 0;
+  border-left: 30px solid transparent;
+  border-right: 30px solid transparent;
+  border-bottom: 50px solid rgba(139, 92, 246, 0.4);
+  animation: rotatePyramid 20s infinite linear;
+  filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.3));
+}
+
+.sphere {
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle at 30% 30%, var(--accent), var(--primary));
+  border-radius: 50%;
+  animation: pulseSphere 8s infinite ease-in-out;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+}
+
+.hexagon {
+  width: 60px;
+  height: 34.64px;
+  background: var(--gradient-3);
+  position: relative;
+  margin: 17.32px 0;
+  border-radius: 6px;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.3);
+}
+
+.hexagon:before,
+.hexagon:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  border-left: 30px solid transparent;
+  border-right: 30px solid transparent;
+}
+
+.hexagon:before {
+  bottom: 100%;
+  border-bottom: 17.32px solid #06b6d4;
+}
+
+.hexagon:after {
+  top: 100%;
+  border-top: 17.32px solid #06b6d4;
+}
+
+@keyframes float3D {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) rotateX(0deg) rotateY(0deg);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px) rotateX(15deg) rotateY(45deg);
+  }
+  50% {
+    transform: translateY(-40px) translateX(-10px) rotateX(30deg) rotateY(90deg);
+  }
+  75% {
+    transform: translateY(-20px) translateX(15px) rotateX(15deg) rotateY(135deg);
+  }
+}
+
+@keyframes rotateCube {
+  0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+  100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+}
+
+@keyframes rotatePyramid {
+  0% { transform: rotateY(0deg) rotateZ(0deg); }
+  100% { transform: rotateY(360deg) rotateZ(180deg); }
+}
+
+@keyframes pulseSphere {
+  0%, 100% { 
+    transform: scale(1) rotateX(0deg); 
+    opacity: 0.1;
+  }
+  50% { 
+    transform: scale(1.3) rotateX(180deg); 
+    opacity: 0.3;
+  }
+}
+
+/* Interactive 3D Elements that respond to mouse */
+.interactive-orb {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, 
+    rgba(99, 102, 241, 0.3), 
+    rgba(139, 92, 246, 0.2),
+    rgba(6, 182, 212, 0.1),
+    transparent);
+  box-shadow: 
+    0 0 60px rgba(99, 102, 241, 0.4),
+    0 0 30px rgba(6, 182, 212, 0.2),
+    inset 0 0 40px rgba(255, 255, 255, 0.1);
+  animation: orbFloat 15s infinite ease-in-out;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: all;
+  cursor: pointer;
+}
+
+@keyframes orbFloat {
+  0%, 100% { 
+    transform: translateY(0px) scale(1);
+  }
+  50% { 
+    transform: translateY(-30px) scale(1.1);
+  }
+}
+
+/* Floating particles */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  animation: float 15s infinite ease-in-out;
+  filter: blur(0.5px);
+  opacity: 0;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(100vh) rotate(0deg) scale(0.5);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100px) rotate(720deg) scale(1.2);
+    opacity: 0;
+  }
+}
+/* Glass morphism header */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--glass-border);
+    z-index: 1000;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+.logo-container, .navbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.logo {
+    height: 60px;
+    width: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    filter: brightness(1.1);
+}
+.logo:hover {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 8px 30px rgba(255, 255, 255, 0.2);
+    filter: brightness(1.3);
+}
+/* Main Content */
+.main-content {
+    position: relative;
+    z-index: 10;
+    min-height: calc(100vh - 120px);
+}
+.container {
+    max-width: 1400px;
+    margin: 0.5rem auto 0;
+    padding: 1.5rem 2rem 2rem;
+}
+/* Modern 2025 Title */
+h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 3.5rem;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 3rem;
+    background: linear-gradient(135deg, var(--primary), var(--accent), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+    filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.3));
+    position: relative;
+}
+/* Roadmap Styles */
+.roadmap {
+    position: absolute;
+    top: 160px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 950px;
+    z-index: 5;
+}
+.roadmap-line {
+    position: absolute;
+    left: 0;
+    top: 5%;
+    width: 4px;
+    height: 95%;
+    background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.4) 0%, 
+        rgba(255, 255, 255, 0.2) 50%, 
+        rgba(255, 255, 255, 0.15) 100%);
+    border-radius: 2px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+.roadmap-progress {
+    position: absolute;
+    left: 0;
+    top: 5%;
+    width: 4px;
+    height: 0%;
+    background: linear-gradient(180deg, #22c55e, #16a34a, #15803d, #22c55e);
+    border-radius: 2px;
+    transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 0 25px rgba(34, 197, 94, 0.8),
+        0 0 50px rgba(34, 197, 94, 0.4),
+        inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+.roadmap-dot {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: var(--glass);
+    border: 3px solid var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.4rem;
+    font-family: 'Orbitron', monospace;
+    line-height: 1;
+    text-align: center;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(99, 102, 241, 0.3),
+        inset 0 2px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -2px 10px rgba(99, 102, 241, 0.1);
+    z-index: 10;
+}
+
+.roadmap-dot::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+    z-index: -1;
+    opacity: 0.25;
+    transition: all 0.3s ease;
+}
+
+.roadmap-dot:hover::before {
+    opacity: 0.6;
+    transform: scale(1.1);
+}
+
+.roadmap-dot:hover {
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 
+        0 15px 50px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(99, 102, 241, 0.5),
+        inset 0 3px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -3px 15px rgba(99, 102, 241, 0.2);
+}
+
+.roadmap-dot:hover span {
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+/* Perfect visual centering relative to upload box heights */
+.roadmap-dot-1 { top: 07%; }
+.roadmap-dot-2 { top: 36%; }
+.roadmap-dot-3 { top: 67%; }
+.roadmap-dot-4 { top: 98%; }
+.roadmap-dot span {
+    color: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    line-height: 0.9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    top: -2px;
+    font-size: inherit;
+    margin: 0;
+    padding: 0;
+}
+.roadmap-dot .fas {
+    display: none;
+    font-size: 1.5rem;
+}
+.roadmap-dot.completed {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border-color: #22c55e;
+    transform: translate(-50%, -50%) scale(1.08);
+    box-shadow: 
+        0 0 35px rgba(34, 197, 94, 0.6),
+        0 12px 40px rgba(0, 0, 0, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.roadmap-dot.completed span {
+    display: none;
+}
+
+.roadmap-dot.completed .fa-check {
+    display: block;
+    color: #ffffff;
+    animation: checkmark 0.6s ease-in-out;
+}
+
+.roadmap-dot.skipped {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border-color: #ef4444;
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 
+        0 0 25px rgba(239, 68, 68, 0.5),
+        0 10px 35px rgba(0, 0, 0, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+.roadmap-dot.skipped span {
+    display: none;
+}
+.roadmap-dot.skipped .fa-times {
+    display: block;
+    color: #ffffff;
+}
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(34, 197, 94, 0.6); }
+    50% { box-shadow: 0 0 50px rgba(34, 197, 94, 0.9); }
+}
+@keyframes checkmark {
+    0% { transform: scale(0) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(180deg); }
+    100% { transform: scale(1) rotate(360deg); }
+}
+/* Row Layout - Consistent Left/Right */
+.row {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    margin: 3.5rem 0;
+    gap: 4rem;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out forwards;
+    min-height: 140px;
+}
+.row:nth-child(2) { animation-delay: 0.2s; }
+.row:nth-child(3) { animation-delay: 0.4s; }
+.row:nth-child(4) { animation-delay: 0.6s; }
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* Enhanced Upload Section Styles */
+.upload-section {
+    flex: 1;
+    max-width: 450px;
+    min-width: 400px;
+    min-height: 160px;
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    order: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.upload-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+    opacity: 0;
+}
+.upload-section:hover::before {
+    opacity: 1;
+    animation: shimmer 1.5s ease-in-out;
+}
+.upload-section:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4), 
+        0 0 40px rgba(157, 78, 221, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    border-color: var(--primary);
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.upload-section.completed {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: #22c55e;
+    box-shadow: 
+        0 0 30px rgba(34, 197, 94, 0.4),
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.upload-section.skipped {
+    background: rgba(255, 107, 107, 0.1);
+    border-color: rgba(255, 107, 107, 0.5);
+    box-shadow: 
+        0 0 20px rgba(255, 107, 107, 0.3),
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+/* Enhanced Instruction Styles */
+.instruction {
+    flex: 1;
+    max-width: 450px;
+    min-width: 350px;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    padding: 2.5rem;
+    margin-left: 20px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 15px;
+    border-left: 4px solid var(--primary);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+    order: 2;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.instruction:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-left-color: var(--secondary);
+    transform: translateX(-5px);
+    box-shadow: 
+        0 8px 30px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #ffffff;
+    white-space: nowrap;
+    min-width: 20px; /* Add this */
+    overflow: visible; /* Add this */
+}
+/* Keep existing step-number styles */
+.step-number {
+    /* Your existing styles remain unchanged */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    /* background: rgba(255, 255, 255, 0.15); */
+    /* border: 2px solid rgba(255, 255, 255, 0.3); */
+    border-radius: 50%;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    /* backdrop-filter: blur(10px); */
+}
+/* Add this new class */
+.title-text {
+    display: inline-block;
+    text-overflow: ellipsis;
+}
+.step-number.completed {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border-color: #22c55e;
+    color: #ffffff;
+    animation: numberPulse 1.5s infinite;
+}
+
+.step-number.skipped {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    border-color: #ff6b6b;
+    color: #ffffff;
+}
+@keyframes numberPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+/* File Input Styling */
+.file-input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+.file-input:hover {
+    border-color: rgba(0, 245, 255, 0.6);
+    background: rgba(0, 245, 255, 0.08);
+    transform: translateY(-2px);
+}
+.file-input:focus {
+    outline: none;
+    border-color: #00f5ff;
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.4);
+}
+/* Text Input Styling */
+.text-input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+.text-input:focus {
+    outline: none;
+    border-color: #00f5ff;
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.4);
+    background: rgba(0, 245, 255, 0.08);
+}
+.text-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+/* Enhanced Generate Button */
+.generate-button {
+    width: 100%;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 
+        0 8px 32px rgba(157, 78, 221, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    margin-top: 1rem;
+}
+
+.generate-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.generate-button:hover::before {
+    left: 100%;
+}
+
+.generate-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 15px 40px rgba(157, 78, 221, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    border-color: var(--primary);
+}
+
+.generate-button:active {
+    transform: translateY(-1px);
+}
+
+.generate-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 
+        0 4px 20px rgba(157, 78, 221, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+/* Status Message */
+#status {
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-align: center;
+    background: rgba(0, 245, 255, 0.1);
+    border: 1px solid rgba(0, 245, 255, 0.3);
+    color: #00f5ff;
+    animation: statusGlow 2s ease-in-out infinite alternate;
+}
+@keyframes statusGlow {
+    from { box-shadow: 0 0 10px rgba(0, 245, 255, 0.3); }
+    to { box-shadow: 0 0 20px rgba(0, 245, 255, 0.6); }
+}
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .container {
+        padding: 1.5rem;
+    }
+}
+@media (max-width: 768px) {
+    body {
+        padding-top: 70px;
+    }
+    .container {
+        padding: 1rem;
+    }
+    h1 {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+    }
+    .row {
+        flex-direction: column;
+        gap: 2rem;
+        margin: 3rem 0;
+        align-items: center;
+    }
+    .roadmap {
+        display: none;
+    }
+    .upload-section, .instruction {
+        max-width: 100%;
+        min-width: unset;
+    }
+    .header {
+        padding: 0.8rem;
+    }
+    .logo {
+        height: 50px;
+    }
+}
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #00f5ff, #ff00aa);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #ff00aa, #00ff88);
+}
+ /* Animated Back Button */
+ .back-btn-container {
+            margin-top: 4rem;
+            margin-bottom:4rem;
+            text-align: center;
+            perspective: 500px;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            background-color: #1a53c6;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 5px 20px rgba(67, 97, 238, 0.4);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+        .back-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.6s;
+        }
+        .back-btn:hover {
+            transform: translateY(-5px) rotateX(10deg);
+            box-shadow: 0 15px 30px rgba(67, 97, 238, 0.6);
+        }
+        .back-btn:hover::before {
+            left: 100%;
+        }
+        .back-btn:active {
+            transform: translateY(0) rotateX(0);
+        }
+        .back-btn i {
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+        .back-btn:hover i {
+            transform: translateX(-5px);
+        }
+
+        /* Upload Indicator Styles */
+        .upload-indicator {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #22c55e;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .upload-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-status i {
+            color: #22c55e;
+        }
+
+        .upload-text {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .upload-count {
+            font-size: 0.8rem;
+            color: rgba(34, 197, 94, 0.8);
+            background: rgba(34, 197, 94, 0.2);
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="cosmic-bg"></div>
+    <div class="nebula"></div>
+    <div class="floating-3d" id="floating3d"></div>
+    <div class="particles" id="particles"></div>
+
+    <header class="header">
+        <div class="logo-container">
+            <img src="{{url_for('static',filename='images/Cog_Moment_Logo.jpg')}}" alt="Left Logo" class="logo" id="left-logo">
+        </div>
+          <div class="navbar">
+               <img src="{{url_for('static',filename='images/Chubb-Logo.jpg')}}" alt="Right Logo" class="logo" id="right-logo">
+        </div>
+    </header>
+    <main class="main-content" id="content-container">
+        <div class="container mx-auto p-8 relative">
+            <!-- Roadmap elements -->
+            <div class="roadmap">
+                <div class="roadmap-line"></div>
+                <div class="roadmap-progress" id="roadmapProgress"></div>
+                <div class="roadmap-dot roadmap-dot-1" id="roadmapDot1"><span>1</span><i class="fas fa-check"></i><i class="fas fa-times"></i></div>
+                <div class="roadmap-dot roadmap-dot-2" id="roadmapDot2"><span>2</span><i class="fas fa-check"></i><i class="fas fa-times"></i></div>
+                <div class="roadmap-dot roadmap-dot-3" id="roadmapDot3"><span>3</span><i class="fas fa-check"></i><i class="fas fa-times"></i></div>
+                <div class="roadmap-dot roadmap-dot-4" id="roadmapDot4"><span>4</span><i class="fas fa-check"></i><i class="fas fa-times"></i></div>
+            </div>
+            <h1 class="text-4xl font-bold text-center mb-8 animate__animated animate__fadeIn">Excel to JLD Converter</h1>
+            <!-- Step 1: Left side -->
+            <div class="row">
+                <div class="upload-section" id="step1Section">
+                        <h2 class="title">
+                            <span class="title-text">Upload Documents Folder</span>
+                        </h2>
+                     <!-- Changed to accept Word docs but kept similar styling -->
+                    <input type="file" id="docxFolder" webkitdirectory directory multiple
+                           accept=".docx" class="file-input">
+                    <!-- Upload indicator -->
+                    <div class="upload-indicator" id="folderIndicator" style="display: none;">
+                        <div class="upload-status">
+                            <i class="fas fa-folder"></i>
+                            <span class="upload-text">No folder selected</span>
+                            <span class="upload-count"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="instruction">
+                    Upload your Word documents folder (.docx) that need to be processed.
+                    The system will automatically convert them to the required format.
+                </div>
+            </div>
+            <!-- Step 2: Right side -->
+            <div class="row">
+                <div class="instruction">
+                    Select a text template file that will be used as the base structure. This template contains placeholders that will be replaced with data from your Excel files during the JLD generation process.
+                </div>
+                <div class="upload-section delay" id="step2Section">
+                    <h2 class="title">
+                        <span class="title-text">Upload Base Template (TXT)</span>
+                    </h2>
+                    <input type="file" id="baseTemplate" accept=".txt" class="file-input">
+                    <!-- Upload indicator -->
+                    <div class="upload-indicator" id="templateIndicator" style="display: none;">
+                        <div class="upload-status">
+                            <i class="fas fa-file-alt"></i>
+                            <span class="upload-text">No template selected</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Step 3: Left side -->
+            <div class="row">
+                <div class="upload-section delay-2" id="step3Section">
+                    <h2 class="title">
+                        <span class="title-text">Upload Variables File (Excel)</span>
+                    </h2>
+                    <input type="file" id="variablesFile" accept=".xlsx, .xls" class="file-input">
+                    <!-- Upload indicator -->
+                    <div class="upload-indicator" id="variablesIndicator" style="display: none;">
+                        <div class="upload-status">
+                            <i class="fas fa-file-excel"></i>
+                            <span class="upload-text">No variables file selected</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="instruction">
+                    Provide an Excel file that contains all the variable definitions and mappings needed for the process. This file defines how data from your Excel folder will be mapped to placeholders in your template.                </div>
+            </div>
+            <!-- Step 4: Right side -->
+            <div class="row">
+                <div class="instruction">
+                 Specify where you want the processed JLD output files to be saved. Enter a valid directory path where you have write permissions. The system will create this directory if it doesn't already exist.
+ </div>
+                <div class="upload-section delay-3" id="step4Section">
+                    <h2 class="title">
+                        <span class="title-text">Specify Output Path</span>
+                    </h2>
+                    <input type="text" id="outputPath" placeholder="Enter output path" class="text-input">
+                    <button id="generateJLD" class="generate-button">Generate JLD Files</button>
+                </div>
+            </div>
+            <!-- Status Message -->
+            <div id="status" class="text-center mt-6 text-gray-600 animate__animated animate__fadeIn animate__delay-4s"></div>
+        </div>
+        <div class="back-btn-container">
+            <a href="{{ url_for('back', current_page='page4') }}" class="back-btn" id="back-btn" data-url="{{ url_for('back', current_page='page4') }}">
+                <i class="fas fa-chevron-left"></i> Back
+            </a>
+        </div>
+    </main>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get form elements (updated to use docxFolder instead of excelFolder)
+        const docxFolderInput = document.getElementById('docxFolder');
+        const baseTemplateInput = document.getElementById('baseTemplate');
+        const variablesFileInput = document.getElementById('variablesFile');
+        const outputPathInput = document.getElementById('outputPath');
+        const statusElement = document.getElementById('status');
+        const generateButton = document.getElementById('generateJLD');
+        // Roadmap elements
+        const roadmapProgress = document.getElementById('roadmapProgress');
+        const roadmapDot1 = document.getElementById('roadmapDot1');
+        const roadmapDot2 = document.getElementById('roadmapDot2');
+        const roadmapDot3 = document.getElementById('roadmapDot3');
+        const roadmapDot4 = document.getElementById('roadmapDot4');
+        // Step number elements (removed since we don't have step numbers anymore)
+        // Section elements
+        const step1Section = document.getElementById('step1Section');
+        const step2Section = document.getElementById('step2Section');
+        const step3Section = document.getElementById('step3Section');
+        const step4Section = document.getElementById('step4Section');
+        // Track completed steps
+        const completedSteps = {
+            1: false,
+            2: false,
+            3: false,
+            4: false
+        };
+        // Update roadmap progress (fixed)
+        function updateRoadmap() {
+            // Reset all visual indicators first
+            [roadmapDot1, roadmapDot2, roadmapDot3, roadmapDot4].forEach(dot => {
+                dot.classList.remove('completed', 'skipped');
+            });
+            [step1Section, step2Section, step3Section, step4Section].forEach(section => {
+                section.classList.remove('completed', 'skipped');
+            });
+            // Determine the highest completed step in order
+            let highestInOrderStep = 0;
+            for (let step = 1; step <= 4; step++) {
+                if (completedSteps[step]) {
+                    highestInOrderStep = step;
+                } else {
+                    break;
+                }
+            }
+            // Mark completed steps (in order)
+            for (let step = 1; step <= highestInOrderStep; step++) {
+                const dot = document.getElementById(`roadmapDot${step}`);
+                const section = document.getElementById(`step${step}Section`);
+                dot.classList.add('completed');
+                section.classList.add('completed');
+            }
+            // Find all completed steps (including out of order)
+            const allCompletedSteps = [];
+            for (let step = 1; step <= 4; step++) {
+                if (completedSteps[step]) {
+                    allCompletedSteps.push(step);
+                }
+            }
+            // If there are completed steps but none in order (highestInOrderStep === 0)
+            // or if there are completed steps beyond the in-order sequence
+            if (allCompletedSteps.length > 0) {
+                const maxCompletedStep = Math.max(...allCompletedSteps);
+                // Mark all missing steps before maxCompletedStep as skipped
+                for (let step = 1; step < maxCompletedStep; step++) {
+                    if (!completedSteps[step]) {
+                        const dot = document.getElementById(`roadmapDot${step}`);
+                        const section = document.getElementById(`step${step}Section`);
+                        dot.classList.add('skipped');
+                        section.classList.add('skipped');
+                    }
+                }
+                // Also mark any completed but out-of-order steps
+                for (let step = highestInOrderStep + 1; step <= maxCompletedStep; step++) {
+                    if (completedSteps[step]) {
+                        const dot = document.getElementById(`roadmapDot${step}`);
+                        const section = document.getElementById(`step${step}Section`);
+                        dot.classList.add('skipped');
+                        section.classList.add('skipped');
+                    }
+                }
+            }
+            // Update progress line height (stops at last dot)
+            // Since progress line starts at 5%, we need to calculate relative heights
+            const dotPositions = [7, 36, 67, 98]; // Absolute positions of dots 1-4 in percentages
+            const progressLineStart = 5; // Progress line starts at 5%
+            
+            if (highestInOrderStep > 0) {
+                const targetPosition = dotPositions[highestInOrderStep - 1];
+                const relativeHeight = targetPosition - progressLineStart;
+                roadmapProgress.style.height = `${relativeHeight}%`;
+            } else {
+                roadmapProgress.style.height = '0%';
+            }
+            
+            // Ensure progress line reaches final position when all steps completed
+            if (highestInOrderStep >= 4) {
+                roadmapProgress.style.height = '93%'; // 98% - 5% = 93%
+                console.log('Progress line set to 93% (reaching 98% position) for all 4 steps completed');
+            }
+        }
+        // Updated checkStepCompletion for Word docs
+        function checkStepCompletion(step) {
+            switch(step) {
+                case 1: return docxFolderInput.files.length > 0;
+                case 2: return baseTemplateInput.files.length > 0;
+                case 3: return variablesFileInput.files.length > 0;
+                case 4: return outputPathInput.value.trim() !== '';
+                default: return false;
+            }
+        }
+        // Update completed steps (unchanged)
+        function updateCompletedSteps() {
+            for (let step = 1; step <= 4; step++) {
+                completedSteps[step] = checkStepCompletion(step);
+            }
+            updateRoadmap();
+        }
+        // Updated event listeners
+        docxFolderInput.addEventListener('change', function() {
+            const folderIndicator = document.getElementById('folderIndicator');
+            const uploadText = folderIndicator.querySelector('.upload-text');
+            const uploadCount = folderIndicator.querySelector('.upload-count');
+            
+            if (this.files.length > 0) {
+                this.style.borderColor = '#22c55e';
+                
+                // Get folder name from first file path
+                const folderPath = this.files[0].webkitRelativePath;
+                const folderName = folderPath.split('/')[0] || 'Selected Folder';
+                
+                uploadText.textContent = `Folder: ${folderName}`;
+                uploadCount.textContent = `${this.files.length} files`;
+                folderIndicator.style.display = 'block';
+                
+                statusElement.textContent = `${this.files.length} Word document(s) selected from ${folderName}`;
+                setTimeout(() => statusElement.textContent = '', 3000);
+            } else {
+                this.style.borderColor = '#ccc';
+                uploadText.textContent = 'No folder selected';
+                uploadCount.textContent = '';
+                folderIndicator.style.display = 'none';
+            }
+            updateCompletedSteps();
+        });
+        baseTemplateInput.addEventListener('change', function() {
+            const templateIndicator = document.getElementById('templateIndicator');
+            const uploadText = templateIndicator.querySelector('.upload-text');
+            
+            if (this.files.length > 0) {
+                this.style.borderColor = '#22c55e';
+                uploadText.textContent = `Template: ${this.files[0].name}`;
+                templateIndicator.style.display = 'block';
+            } else {
+                this.style.borderColor = '#ccc';
+                uploadText.textContent = 'No template selected';
+                templateIndicator.style.display = 'none';
+            }
+            updateCompletedSteps();
+        });
+        variablesFileInput.addEventListener('change', function() {
+            const variablesIndicator = document.getElementById('variablesIndicator');
+            const uploadText = variablesIndicator.querySelector('.upload-text');
+            
+            if (this.files.length > 0) {
+                this.style.borderColor = '#22c55e';
+                uploadText.textContent = `Variables: ${this.files[0].name}`;
+                variablesIndicator.style.display = 'block';
+            } else {
+                this.style.borderColor = '#ccc';
+                uploadText.textContent = 'No variables file selected';
+                variablesIndicator.style.display = 'none';
+            }
+            updateCompletedSteps();
+        });
+        outputPathInput.addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                this.style.borderColor = '#22c55e';
+            } else {
+                this.style.borderColor = '#ccc';
+            }
+            updateCompletedSteps();
+        });
+        // Handle back button (unchanged)
+        const backButton = document.querySelector('.back-btn');
+        backButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '/';
+        });
+        // Updated Generate JLD Files button handler for Word processing
+        generateButton.addEventListener('click', async () => {
+            const docxFiles = docxFolderInput.files;
+            const baseTemplate = baseTemplateInput.files[0];
+            const variablesFile = variablesFileInput.files[0];
+            const outputPath = outputPathInput.value;
+            // Validate inputs
+            if (!completedSteps[1] || !completedSteps[2] || !completedSteps[3] || !completedSteps[4]) {
+                alert('Please complete all steps before generating JLD files.');
+                return;
+            }
+            // Update status
+            statusElement.textContent = 'Processing Word documents...';
+            generateButton.disabled = true;
+            try {
+                const formData = new FormData();
+                // Append all Word files
+                Array.from(docxFiles).forEach(file => {
+                    formData.append('files', file);
+                });
+                // Append other required files
+                formData.append('baseTemplate', baseTemplate);
+                formData.append('variablesFile', variablesFile);
+                formData.append('outputPath', outputPath);
+                const response = await fetch('/api/convert-docx', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                 throw new Error(result.error || 'Conversion failed');
+                }
+                statusElement.textContent = 'JLD files generated successfully!';
+                console.log(`JLD files saved to: ${result.output_path}`);
+            } catch (error) {
+                statusElement.textContent = `Error: ${error.message}`;
+                console.error('Conversion error:', error);
+            } finally {
+                generateButton.disabled = false;
+                setTimeout(() => {
+                   statusElement.textContent = '';
+                }, 5000);
+            }
+        });
+        // Initialize roadmap
+        updateRoadmap();
+        
+        // Generate 3D floating geometric elements
+        function create3DElements() {
+            const floating3dContainer = document.getElementById('floating3d');
+            const particlesContainer = document.getElementById('particles');
+            
+            // Create geometric shapes
+            function createGeometricShape() {
+                const shapes = ['cube', 'pyramid', 'sphere', 'hexagon'];
+                const randomShape = shapes[Math.floor(Math.random() * shapes.length)];
+                
+                const shape = document.createElement('div');
+                shape.className = `geometric-shape ${randomShape}`;
+                
+                // Random position
+                shape.style.left = Math.random() * 100 + '%';
+                shape.style.top = Math.random() * 100 + '%';
+                
+                // Random animation delay
+                shape.style.animationDelay = Math.random() * 5 + 's';
+                
+                // Random scale
+                const scale = Math.random() * 0.8 + 0.6;
+                shape.style.transform = `scale(${scale})`;
+                
+                floating3dContainer.appendChild(shape);
+                
+                // Remove shape after some time
+                setTimeout(() => {
+                    if (shape.parentNode) {
+                        shape.parentNode.removeChild(shape);
+                    }
+                }, 20000 + Math.random() * 10000);
+            }
+            
+            // Create interactive orbs
+            function createInteractiveOrb() {
+                const orb = document.createElement('div');
+                orb.className = 'interactive-orb';
+                
+                // Random position
+                orb.style.left = Math.random() * 90 + '%';
+                orb.style.top = Math.random() * 90 + '%';
+                
+                // Random animation delay
+                orb.style.animationDelay = Math.random() * 3 + 's';
+                
+                // Mouse interaction
+                orb.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.6) rotateY(180deg)';
+                    this.style.boxShadow = '0 0 100px rgba(99, 102, 241, 0.8), 0 0 50px rgba(6, 182, 212, 0.6), inset 0 0 60px rgba(255, 255, 255, 0.3)';
+                });
+                
+                orb.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1) rotateY(0deg)';
+                    this.style.boxShadow = '0 0 60px rgba(99, 102, 241, 0.4), 0 0 30px rgba(6, 182, 212, 0.2), inset 0 0 40px rgba(255, 255, 255, 0.1)';
+                });
+                
+                floating3dContainer.appendChild(orb);
+                
+                // Remove orb after some time
+                setTimeout(() => {
+                    if (orb.parentNode) {
+                        orb.parentNode.removeChild(orb);
+                    }
+                }, 30000 + Math.random() * 15000);
+            }
+            
+            // Create smaller particles
+            function createParticle() {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random size
+                const size = Math.random() * 3 + 1;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random starting position
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.bottom = '-5px';
+                
+                // Random animation duration
+                const duration = Math.random() * 8 + 12;
+                particle.style.animationDuration = duration + 's';
+                
+                // Random delay
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                
+                particlesContainer.appendChild(particle);
+                
+                // Remove particle after animation
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, (duration + 2) * 1000);
+            }
+            
+            // Create initial elements
+            for (let i = 0; i < 8; i++) {
+                setTimeout(createGeometricShape, Math.random() * 3000);
+            }
+            
+            for (let i = 0; i < 4; i++) {
+                setTimeout(createInteractiveOrb, Math.random() * 5000);
+            }
+            
+            for (let i = 0; i < 30; i++) {
+                setTimeout(createParticle, Math.random() * 4000);
+            }
+            
+            // Continuously create new elements
+            setInterval(createGeometricShape, 3000);
+            setInterval(createInteractiveOrb, 8000);
+            setInterval(createParticle, 500);
+        }
+        
+        // Add mouse movement interaction for 3D perspective
+        function addMouseInteraction() {
+            document.addEventListener('mousemove', function(e) {
+                const mouseX = e.clientX / window.innerWidth;
+                const mouseY = e.clientY / window.innerHeight;
+                
+                const floating3d = document.getElementById('floating3d');
+                const perspective = `perspective(1000px) rotateY(${(mouseX - 0.5) * 5}deg) rotateX(${(mouseY - 0.5) * -5}deg)`;
+                floating3d.style.transform = perspective;
+            });
+        }
+        
+        // Start 3D elements and interactions
+        create3DElements();
+        addMouseInteraction();
+    });
+</script>
+</body>
+</html>

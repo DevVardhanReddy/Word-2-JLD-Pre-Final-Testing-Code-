@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Similarity Analyzer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   <style>
+    :root {
+        --primary-color: #4361ee;
+        --secondary-color: #3a0ca3;
+        --accent-color: #4cc9f0;
+        --light-color: #f8f9fa;
+        --dark-color: #121212; /* Darkened background color */
+        --success-color: #2ecc71;
+        --warning-color: #f39c12;
+        --danger-color: #e74c3c;
+        --purple: #7209b7;
+        --pink: #f72585;
+        --card-bg: #1e1e1e; /* Dark card background */
+        --text-color: #e0e0e0; /* Light text color */
+        --border-color: #333333; /* Dark border color */
+    }
+    
+    body {
+        font-family: 'Roboto', sans-serif;
+        color: var(--text-color);
+        padding-top: 20px;
+        padding-bottom: 40px;
+        position: relative;
+        overflow-x: hidden;
+        background: var(--dark-color);
+    }
+    
+    /* Enhanced Animated Grid Background - Dark Version */
+    .grid-lines {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            linear-gradient(90deg, rgba(67, 97, 238, 0.05) 1px, transparent 1px),
+            linear-gradient(rgba(67, 97, 238, 0.05) 1px, transparent 1px);
+        background-size: 35px 35px;
+        z-index: -2;
+        animation: gridScroll 45s linear infinite;
+        pointer-events: none;
+    }
+
+    @keyframes gridScroll {
+        0% { background-position: 0 0; }
+        100% { background-position: 35px 35px; }
+    }
+    
+    /* Floating Bubbles - Dark Version */
+    .bubble {
+        position: fixed;
+        border-radius: 50%;
+        background: rgba(67, 97, 238, 0.08);
+        z-index: -1;
+        animation: float 15s infinite ease-in-out;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-100px) rotate(180deg); }
+    }
+    
+    .header {
+        border-bottom: 2px solid rgba(67, 97, 238, 0.3);
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        text-align: center;
+        animation: fadeInDown 1s;
+        background: linear-gradient(to right, var(--primary-color), var(--purple));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    
+    h1 {
+        font-family: 'Playfair Display', serif;
+        background: linear-gradient(to right, var(--primary-color), var(--purple));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: var(--text-color);
+    }
+    
+    h2, h3, h4, h5, h6 {
+        font-family: 'Playfair Display', serif;
+        color: var(--text-color);
+    }
+    
+    .card {
+        margin-bottom: 25px;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+        background-color: var(--card-bg);
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(to right, var(--primary-color), var(--accent-color), var(--purple));
+    }
+    
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border-bottom: none;
+        padding: 15px 20px;
+        font-weight: 500;
+    }
+    
+    .alert {
+        margin-top: 20px;
+        border-radius: 12px;
+        animation: fadeIn 0.5s;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        background-color: var(--card-bg);
+    }
+    
+    .file-list, .report-list {
+        max-height: 300px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--accent-color) var(--dark-color);
+    }
+    
+    .file-list::-webkit-scrollbar, .report-list::-webkit-scrollbar {
+        width: 8px;
+        background-color: var(--dark-color);
+    }
+    
+    .file-list::-webkit-scrollbar-track, .report-list::-webkit-scrollbar-track {
+        background: var(--dark-color);
+        border-radius: 10px;
+    }
+    
+    .file-list::-webkit-scrollbar-thumb, .report-list::-webkit-scrollbar-thumb {
+        background-color: var(--accent-color);
+        border-radius: 10px;
+    }
+    
+    .list-group-item {
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 12px 15px;
+        transition: all 0.2s ease;
+        margin-bottom: 5px;
+        border-radius: 8px !important;
+        background-color: var(--card-bg);
+        color: var(--text-color);
+    }
+    
+    .list-group-item:hover {
+        background: linear-gradient(to right, rgba(67, 97, 238, 0.15), rgba(76, 201, 240, 0.15));
+        transform: translateX(5px);
+        box-shadow: 0 4px 8px rgba(67, 97, 238, 0.2);
+    }
+    
+    .btn {
+        border-radius: 8px;
+        padding: 10px 24px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: 0.5s;
+    }
+    
+    .btn:hover::before {
+        left: 100%;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(67, 97, 238, 0.4);
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, var(--success-color), #27e09a);
+    }
+    
+    .btn-success:hover {
+        background: linear-gradient(135deg, #219653, var(--success-color));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(46, 204, 113, 0.4);
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, var(--danger-color), #ff6b6b);
+    }
+    
+    .btn-danger:hover {
+        background: linear-gradient(135deg, #c0392b, var(--danger-color));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(231, 76, 60, 0.4);
+    }
+    
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 12px 16px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        background-color: #2a2a2a;
+        color: var(--text-color);
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.25rem rgba(76, 201, 240, 0.25);
+        transform: translateY(-2px);
+        background-color: #2a2a2a;
+        color: var(--text-color);
+    }
+    
+    .lead {
+        font-size: 1.25rem;
+        color: var(--text-color);
+        animation: fadeIn 1s 0.3s both;
+    }
+    
+    .text-muted {
+        color: #8a8a8a !important;
+    }
+    
+    @keyframes fadeInItem {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .list-group-item {
+        animation: fadeInItem 0.5s ease-out forwards;
+        opacity: 0;
+    }
+    
+    .list-group-item:nth-child(1) { animation-delay: 0.1s; }
+    .list-group-item:nth-child(2) { animation-delay: 0.2s; }
+    .list-group-item:nth-child(3) { animation-delay: 0.3s; }
+    .list-group-item:nth-child(4) { animation-delay: 0.4s; }
+    .list-group-item:nth-child(5) { animation-delay: 0.5s; }
+    .list-group-item:nth-child(n+6) { animation-delay: 0.6s; }
+    
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.7); }
+        70% { box-shadow: 0 0 0 15px rgba(67, 97, 238, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0); }
+    }
+    
+    .floating {
+        animation: floating 3s ease-in-out infinite;
+    }
+    
+    @keyframes floating {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+    }
+    
+    .paper-effect {
+        position: relative;
+        background: var(--card-bg);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .paper-effect::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(67, 97, 238, 0.05), rgba(76, 201, 240, 0.05));
+        z-index: -1;
+    }
+    
+    .has-files { width: 100%; }
+    .no-files { width: 0%; }
+    
+    /* Progress bar animation */
+    .progress {
+        border-radius: 10px;
+        height: 10px;
+        background: rgba(67, 97, 238, 0.1);
+    }
+    
+    .progress-bar {
+        border-radius: 10px;
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        transition: width 1s ease-in-out;
+    }
+    
+    /* Glowing effect for active elements */
+    .glow {
+        animation: glow 2s infinite alternate;
+    }
+    
+    @keyframes glow {
+        from {
+            box-shadow: 0 0 5px rgba(67, 97, 238, 0.5);
+        }
+        to {
+            box-shadow: 0 0 20px rgba(67, 97, 238, 0.8);
+        }
+    }
+    
+    /* Colorful badges */
+    .badge {
+        font-weight: 500;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+    
+    /* Gradient text for special elements */
+    .gradient-text {
+        background: linear-gradient(to right, var(--primary-color), var(--pink));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+  /* Animated Back Button */
+  .back-button-container {
+            margin-top: 4rem;
+            text-align: center;
+            perspective: 500px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            background-color: #1a53c6;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 5px 20px rgba(67, 97, 238, 0.4);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .back-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.6s;
+        }
+
+        .back-button:hover {
+            transform: translateY(-5px) rotateX(10deg);
+            box-shadow: 0 15px 30px rgba(67, 97, 238, 0.6);
+        }
+
+        .back-button:hover::before {
+            left: 100%;
+        }
+
+        .back-button:active {
+            transform: translateY(0) rotateX(0);
+        }
+
+        .back-button i {
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-button:hover i {
+            transform: translateX(-5px);
+        }
+
+
+
+</style>
+</head>
+<body>
+    <div class="grid-lines"></div>
+    <!-- Rest of your existing bubbles and content -->
+    <div class="bubble" style="width: 200px; height: 200px; top: 10%; left: 5%;"></div>
+    <div class="bubble" style="width: 150px; height: 150px; top: 70%; left: 80%; animation-delay: 2s;"></div>
+    <div class="bubble" style="width: 100px; height: 100px; top: 30%; left: 60%; animation-delay: 4s;"></div>
+    <div class="bubble" style="width: 250px; height: 250px; top: 50%; left: 20%; animation-delay: 1s;"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="display-4">Document Similarity Analyzer</h1>
+            <p class="lead">Upload .docx files to analyze their semantic similarity</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'error' else 'danger' }} animate__animated animate__fadeIn">
+                        {{ message }}
+                        <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row animate__animated animate__fadeIn">
+            <div class="col-md-6">
+                <div class="card paper-effect glow">
+                    <div class="card-header">
+                        <h4><i class="fas fa-cog me-2"></i> Configuration</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('web.set_config') }}" method="post">                            
+                            <div class="mb-3">
+                                <label for="api_key" class="form-label">Cohere API Key</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="api_key" name="api_key" value="{{ api_key }}">
+                                    <button class="btn btn-outline-light" type="button" id="toggleApiKey">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text text-danger">Note: Keep your API key secure.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="model" class="form-label">Embedding Model</label>
+                                <select class="form-select" id="model" name="model">
+                                    <option value="embed-english-light-v2.0" {% if model == 'embed-english-light-v2.0' %}selected{% endif %}>embed-english-light-v2.0</option>
+                                    <option value="embed-english-v2.0" {% if model == 'embed-english-v2.0' %}selected{% endif %}>embed-english-v2.0</option>
+                                    <option value="embed-multilingual-v2.0" {% if model == 'embed-multilingual-v2.0' %}selected{% endif %}>embed-multilingual-v2.0</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Configuration
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card paper-effect">
+                    <div class="card-header">
+                        <h4><i class="fas fa-upload me-2"></i> Upload Documents</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('web.upload_files') }}" method="post" enctype="multipart/form-data" id="uploadForm">
+                            <div class="mb-3">
+                                <label for="files" class="form-label">Select .docx files</label>
+                                <input class="form-control" type="file" id="files" name="files" multiple accept=".docx">
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="uploadBtn">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>Upload Files
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card paper-effect">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4><i class="fas fa-folder-open me-2"></i> Uploaded Files</h4>
+                        <form action="{{ url_for('web.clear_uploads_route') }}" method="post">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash me-1"></i>Clear All
+                            </button>
+                        </form>
+                    </div>
+                    <div class="card-body">
+                        {% if uploaded_files %}
+                            <div class="file-list">
+                                <ul class="list-group">
+                                    {% for file in uploaded_files %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-file-word text-primary me-2"></i>{{ file }}</span>
+                                            <span class="badge bg-primary rounded-pill">{{ loop.index }}</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <form action="{{ url_for('web.analyze') }}" method="post" class="mt-3">
+                                <input type="hidden" name="api_key" value="{{ api_key }}">
+                                <input type="hidden" name="model" value="{{ model }}">
+                                <button type="submit" class="btn btn-success w-100 pulse" {% if not api_key %}disabled{% endif %}>
+                                    <i class="fas fa-search me-2"></i>Run Similarity Analysis
+                                </button>
+                                {% if not api_key %}
+                                    <div class="form-text text-danger mt-2"><i class="fas fa-exclamation-circle me-1"></i>Please provide an API key first</div>
+                                {% endif %}
+                            </form>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-folder-open fa-4x text-muted mb-3 floating"></i>
+                                <p class="text-muted">No documents found. Upload some .docx files to begin.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <!-- <div class="card paper-effect">
+                    <div class="card-header">
+                        <h4><i class="fas fa-file-alt me-2"></i> Documents</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if uploaded_files %}
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                    <i class="fas fa-files-o fa-2x text-primary"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 gradient-text">{{ uploaded_files|length }} document(s) ready</h5>
+                                    <small class="text-muted">for analysis</small>
+                                </div>
+                            </div>
+                            {% set progress_width = '100%' if uploaded_files|length > 0 else '0%' %}
+
+                            <div class="progress mt-3" style="height: 10px;">
+                                <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated {{ 'has-files' if uploaded_files|length > 0 else 'no-files' }}" 
+                                     role="progressbar" 
+                                     aria-valuenow="{{ uploaded_files|length }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="10">
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-file-alt fa-4x text-muted mb-3 floating"></i>
+                                <p class="text-muted">No documents found. Upload some .docx files to begin.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div> -->
+
+                <div class="card paper-effect">
+                    <div class="card-header">
+                        <h4><i class="fas fa-chart-bar me-2"></i> Generated Reports</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if reports %}
+                            <div class="report-list">
+                                <ul class="list-group">
+                                    {% for report in reports %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <i class="fas fa-file-excel text-success me-2"></i>                                                <span>{{ report }}</span>
+                                            </div>
+                                            <a href="{{ url_for('web.download_report', filename=report) }}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-download me-1"></i>Download
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-chart-pie fa-4x text-muted mb-3 floating"></i>
+                                <p class="text-muted">No reports generated yet. Analyze documents to generate reports.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="back-btn-container">
+        <a href="{{ url_for('back', current_page='page2') }}" class="back-btn" id="back-btn" data-url="{{ url_for('back', current_page='page2') }}">
+            <i class="fas fa-chevron-left"></i> Back
+        </a>
+    </div> -->
+
+
+    <div class="back-button-container">
+        <a href="{{ url_for('back', current_page='page4') }}" class="back-button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; margin-right: 8px;">
+            <path d="M19 12H5"></path>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back
+        </a>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        
+        // Toggle API key visibility
+        document.getElementById('toggleApiKey').addEventListener('click', function() {
+            const apiKeyInput = document.getElementById('api_key');
+            const icon = this.querySelector('i');
+            if (apiKeyInput.type === 'password') {
+                apiKeyInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                apiKeyInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+        
+        // Add animation to upload button when files are selected
+        document.getElementById('files').addEventListener('change', function() {
+            if (this.files.length > 0) {
+                const uploadBtn = document.getElementById('uploadBtn');
+                uploadBtn.classList.add('animate__animated', 'animate__pulse');
+                setTimeout(() => {
+                    uploadBtn.classList.remove('animate__animated', 'animate__pulse');
+                }, 1000);
+            }
+        });
+        
+        // Form submission animation
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            const btn = document.getElementById('uploadBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+            btn.disabled = true;
+        });
+        
+        // Close alert animation
+        document.querySelectorAll('.btn-close').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const alert = this.closest('.alert');
+                alert.classList.add('animate__animated', 'animate__fadeOut');
+                setTimeout(() => {
+                    alert.remove();
+                }, 500);
+            });
+        });
+        
+        // Create additional floating bubbles
+        function createBubbles() {
+            const colors = ['rgba(67, 97, 238, 0.1)', 'rgba(76, 201, 240, 0.1)', 'rgba(114, 9, 183, 0.1)'];
+            for (let i = 0; i < 5; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                const size = Math.random() * 150 + 50;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.top = `${Math.random() * 100}%`;
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.background = colors[Math.floor(Math.random() * colors.length)];
+                bubble.style.animationDelay = `${Math.random() * 5}s`;
+                bubble.style.animationDuration = `${10 + Math.random() * 20}s`;
+                document.body.appendChild(bubble);
+            }
+        }
+        
+        // Initialize bubbles
+        window.addEventListener('load', createBubbles);
+    </script>
+</body>
+</html>
